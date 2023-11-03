@@ -1,0 +1,22 @@
+{
+  "name": "PROJECT-USER",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BiKenOKVIP/PROJECT-USER.git",
+  "author": "BiKen <biken@okvip.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.6.3",
+    "nodemon": "^3.0.1"
+  },
+  "devDependencies": {}
+}
