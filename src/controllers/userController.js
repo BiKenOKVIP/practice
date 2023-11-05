@@ -18,6 +18,7 @@ const userController = {
           : "Danh sách user rỗng!!!";
 
       res.status(200).json({
+        status: 200,
         message,
         data: users,
       });
@@ -55,15 +56,18 @@ const userController = {
       if (!user) {
         return res
           .status(404)
-          .json({ error: "User không tồn tại!!!", user: null });
+          .json({ status: 404, error: "User không tồn tại!!!", user: null });
       } else {
         return res.status(200).json({
+          status: 200,
           message: "Update user thành công!!!",
           updateData: update,
         });
       }
     } catch (error) {
-      res.status(404).json({ error: "User không tồn tại!!!", user: null });
+      res
+        .status(404)
+        .json({ status: 404, error: "User không tồn tại!!!", user: null });
     }
   },
 
@@ -73,7 +77,9 @@ const userController = {
       const accountExists = await User.findOne({ username: req.body.username });
       if (accountExists) {
         return res.status(500).json({
+          status: 500,
           message: "Username này đã tồn tại!!!",
+          accountExists: accountExists,
         });
       }
 
@@ -89,9 +95,14 @@ const userController = {
 
       const user = await newUser.save();
 
-      return res.status(200).json(user);
+      return res.status(200).json({
+        status: 200,
+        message: "Thêm user thành công!!!",
+        user: user,
+      });
     } catch (error) {
       res.status(500).json({
+        status: 500,
         message: error?.keyValue?.email
           ? "Email này đã tồn tại!!!"
           : error?.keyValue?.username
@@ -106,11 +117,14 @@ const userController = {
     try {
       const user = await User.findByIdAndDelete(req.params.id);
       return res.status(200).json({
+        status: user ? 200 : 404,
         message: user ? "Xóa user thành công!!!" : "Xóa user thất bại!!!",
         user: user ? user : null,
       });
     } catch (error) {
-      res.status(404).json({ error: "User không tồn tại!!!", user: null });
+      res
+        .status(404)
+        .json({ status: 404, error: "User không tồn tại!!!", user: null });
     }
   },
 };

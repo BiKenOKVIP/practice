@@ -22,6 +22,7 @@ const authController = {
         .json({ status: 200, message: "Đăng ký thành công!!!", user });
     } catch (error) {
       res.status(500).json({
+        status: 500,
         message: error?.keyValue?.email
           ? "Email này đã tồn tại!!!"
           : error?.keyValue?.username
@@ -30,6 +31,39 @@ const authController = {
         error: error,
       });
     }
+  },
+
+  generateAccessToken: (user) => {
+    jwt.sign(
+      {
+        id: user.id,
+        admin: user.isAdmin,
+      },
+      process.env.SECRET_KEY,
+      { expiresIn: "2h" }
+    );
+  },
+
+  generateAccessToken: (user) => {
+    return jwt.sign(
+      {
+        id: user.id,
+        admin: user.isAdmin,
+      },
+      process.env.SECRET_KEY,
+      { expiresIn: "2h" }
+    );
+  },
+
+  generateRefreshToken: (user) => {
+    return jwt.sign(
+      {
+        id: user.id,
+        admin: user.isAdmin,
+      },
+      process.env.REFRESH_KEY,
+      { expiresIn: "100d" }
+    );
   },
 
   loginUser: async (req, res) => {
@@ -52,9 +86,18 @@ const authController = {
           .json({ status: 404, message: "Password sai!!!", user: null });
       }
 
-      return res
-        .status(200)
-        .json({ status: 200, message: "Đăng nhập thành công!!!", user });
+      if (isValidPassword && user) {
+        const accessToken = authController.generateAccessToken(user);
+        const refreshToken = authController.generateRefreshToken(user);
+
+        return res.status(200).json({
+          status: 200,
+          message: "Đăng nhập thành công!!!",
+          user,
+          accessToken,
+          refreshToken,
+        });
+      }
     } catch (error) {
       res.status(500).json(error);
     }
