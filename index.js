@@ -6,6 +6,10 @@ const userRoute = require("./src/routes/user");
 const authRoute = require("./src/routes/auth");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+// Sử dụng cookie-parser middleware
+app.use(cookieParser());
 
 app.use(cors());
 dotenv.config();

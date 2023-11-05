@@ -90,17 +90,42 @@ const authController = {
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
 
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          path: "/",
+          sameSite: "strict",
+        });
+
         return res.status(200).json({
           status: 200,
           message: "Đăng nhập thành công!!!",
           user,
           accessToken,
-          refreshToken,
         });
       }
     } catch (error) {
       res.status(500).json(error);
     }
+  },
+
+  requestRefreshToken: async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) return res.status(401).json("Chưa được xác thực");
+    jwt.verify(refreshToken, process.env.REFRESH_KEY, (err, user) => {
+      if (err) {
+        return err;
+      }
+      const newAccessToken = authController.generateAccessToken(user);
+      const newRefreshToken = authController.generateRefreshToken(user);
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict",
+      });
+      return res.status(200).json({ accessToken: newAccessToken });
+    });
   },
 };
 
